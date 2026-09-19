@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://splitease:splitease@postgres:5432/splitease
+      MONGO_URL: mongodb://mongo:27017/splitease
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: replace_with_a_long_random_string
+      EXCHANGE_RATE_API_URL: https://open.er-api.com/v6/latest
+    depends_on:
+      - postgres
+      - mongo
+      - redis
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: splitease
+      POSTGRES_PASSWORD: splitease
+      POSTGRES_DB: splitease
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  mongodata:
